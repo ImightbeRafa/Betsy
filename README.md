@@ -1,36 +1,172 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Betsy CRM System
 
-## Getting Started
+A modern, web-based CRM system built for managing sales and production operations, with a focus on user-friendly data entry and real-time sales tracking.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
+### Sales Management
+- 📝 Customer information capture and storage
+- 🛍️ Product ordering system
+- 💰 Real-time price calculation with IVA
+- 🚚 Shipping cost management
+- 📊 Daily sales tracking
+- 📋 Recent orders display
+
+### Order Tracking
+- 🏷️ Unique order ID generation
+- 📌 Status tracking
+- 📦 Delivery information management
+- 📜 Order history
+
+### Financial Management
+- 💵 Daily sales totals
+- 🧮 Automatic IVA calculation
+- 📊 Shipping cost tracking
+- 💰 Product cost management
+
+## 🛠️ Technical Stack
+
+- **Frontend**: Next.js 14 with TypeScript
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Backend**: Google Apps Script
+- **Database**: Google Sheets
+- **Deployment**: Cloudflare Pages
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js >=18.18.0
+- npm
+- Google account for Sheets access
+
+### Installation
+
+1. Clone the repository:
+
+bash
+git clone [repository-url]
+cd Betsy/crm
+
+2. Install dependencies:
+
+bash
+npm install
+
+3. Configure environment variables:
+
+bash
+cp .env.example .env.local
+Update with your Google Apps Script deployment URL
+
+bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Google Sheets Setup
+1. Create a new Google Sheet
+2. Set up the required columns as per the data structure
+3. Deploy the Google Apps Script with provided code
+4. Update the deployment URL in your environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Project Structure
 
-## Learn More
+Betsy/
+└── crm/
+    ├── src/
+    │   ├── app/
+    │   │   ├── components/
+    │   │   │   ├── ui/
+    │   │   │   │   ├── alert.tsx
+    │   │   │   │   ├── card.tsx
+    │   │   │   │   └── dialog.tsx
+    │   │   │   └── RecentSales.tsx
+    │   │   ├── ventas/
+    │   │   │   ├── components/
+    │   │   │   │   └── SalesForm.tsx
+    │   │   │   └── page.tsx
+    │   │   ├── produccion/
+    │   │   │   └── page.tsx
+    │   │   ├── layout.tsx
+    │   │   ├── page.tsx
+    │   │   └── globals.css
+    │   └── lib/
+    │       └── utils.ts
+    ├── public/
+    ├── .gitignore
+    ├── next.config.js
+    ├── package.json
+    ├── postcss.config.js
+    ├── tailwind.config.ts
+    └── tsconfig.json
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔧 Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Building for Production
 
-## Deploy on Vercel
+bash
+npm run build
+npm start
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Data Structure
+
+#### Customer Information
+- Name
+- Phone
+- Province
+- Canton
+- District
+- Email
+- Username
+- Address
+- Business
+
+#### Product Information
+- Type
+- Color
+- Size
+- Packaging
+- Comments
+- Product Cost
+- Shipping Cost
+- IVA
+- Total
+
+## ✨ Current Status
+
+### Completed Features
+- ✅ Basic sales form functionality
+- ✅ Google Sheets integration
+- ✅ Recent sales display
+- ✅ Navigation structure
+- ✅ Order creation and storage
+
+### In Development
+- 🚧 Production module
+- 🚧 Enhanced reporting
+- 🚧 User authentication
+- 🚧 Advanced search functionality
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+[License Type] - See LICENSE.md for details
+
+## 📞 Contact
+Project Maintainer - [Your Contact Information]
+
+## 🙏 Acknowledgments
+- [shadcn/ui](https://ui.shadcn.com/) for component library
+- Google Sheets for database functionality
+- Cloudflare for hosting
+
+---
+
+This documentation is maintained as part of the Betsy CRM project and will be updated as new features are developed.

@@ -1,36 +1,74 @@
 /** @type {import('next').NextConfig} */
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CompressionPlugin = require('compression-webpack-plugin');
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
 
 const nextConfig = {
   output: 'standalone',
-  distDir: "out",
+  poweredByHeader: false,
+  compress: true,
+  reactStrictMode: true,
+  
+  // Optimize images
   images: {
     unoptimized: true,
-    domains: ['lh3.googleusercontent.com'], // For Google profile images
+    domains: ['lh3.googleusercontent.com'],
+    deviceSizes: [640, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64],
   },
-  // Add experimental and optimization settings
-  experimental: {
-    outputFileTracing: true,
-  },
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      chunks: 'all',
-      minSize: 10000, // Minimum size for chunks
-      maxSize: 25000000, // 25 MB in bytes, ensures no chunk exceeds this
-    },
-  },
-  // Webpack configuration for Bundle Analyzer
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    if (!dev && isServer) {
-      config.plugins.push(new BundleAnalyzerPlugin({
-        analyzerMode: 'static',
-        reportFilename: 'server-bundle-report.html',
-        openAnalyzer: false,
-      }));
+
+  webpack: (config, { dev, isServer }) => {
+    // Production optimizations only
+    if (!dev) {
+      // Enable compression
+      config.plugins.push(
+        new CompressionPlugin({
+          test: /\.(js|css|html|svg)$/,
+          algorithm: 'gzip',
+          threshold: 10240,
+          minRatio: 0.8,
+        })
+      );
+
+      // Optimize chunks
+      config.optimization = {
+        ...config.optimization,
+        minimize: true,
+        moduleIds: 'deterministic',
+        runtimeChunk: isServer ? false : 'single',
+        splitChunks: {
+          chunks: 'all',
+          minSize: 10000,
+          maxSize: 20000000, // 20MB to be safe
+          cacheGroups: {
+            vendor: {
+              name: (module) => {
+                const packageName = module.context.match(
+                  /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                )[1];
+                return `vendor.${packageName.replace('@', '')}`;
+              },
+              test: /[\\/]node_modules[\\/]/,
+              chunks: 'all',
+              priority: 20,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
+            commons: {
+              name: 'commons',
+              minChunks: 2,
+              priority: 10,
+              reuseExistingChunk: true,
+              enforce: true,
+            },
+          },
+        },
+      };
     }
+
     return config;
   },
-}
+};
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

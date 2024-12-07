@@ -4,8 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/ca
 import { Save, Loader } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 
+interface CustomerInfo {
+  name: string;
+  phone: string;
+  province: string;
+  canton: string;
+  district: string;
+  email: string;
+  address: string;
+  business: string;
+}
+
 const SalesForm = () => {
-  const [customerInfo, setCustomerInfo] = useState({
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     phone: '',
     province: '',
@@ -85,34 +96,34 @@ const SalesForm = () => {
         return '';
     };
 
-    const newCustomerInfo = {
-        ...customerInfo,
-        name: findMatch(patterns.name, normalizedText),
-        phone: findMatch(patterns.phone, normalizedText)?.replace(/[-\s]/g, ''),
-        province: findMatch(patterns.province, normalizedText),
-        canton: findMatch(patterns.canton, normalizedText),
-        district: findMatch(patterns.district, normalizedText),
-        email: findMatch(patterns.email, normalizedText),
-        address: findMatch(patterns.address, normalizedText)
+    const newCustomerInfo: CustomerInfo = {
+      name: findMatch(patterns.name, normalizedText),
+      phone: findMatch(patterns.phone, normalizedText)?.replace(/[-\s]/g, '') || '',
+      province: findMatch(patterns.province, normalizedText),
+      canton: findMatch(patterns.canton, normalizedText),
+      district: findMatch(patterns.district, normalizedText),
+      email: findMatch(patterns.email, normalizedText),
+      address: findMatch(patterns.address, normalizedText),
+      business: customerInfo.business
     };
 
-    Object.keys(newCustomerInfo).forEach(key => {
-        if (typeof newCustomerInfo[key] === 'string') {
-            newCustomerInfo[key] = newCustomerInfo[key]
-                .replace(/^[:\-]\s*/, '')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
+    (Object.keys(newCustomerInfo) as Array<keyof CustomerInfo>).forEach(key => {
+      if (typeof newCustomerInfo[key] === 'string') {
+        newCustomerInfo[key] = newCustomerInfo[key]
+          .replace(/^[:\-]\s*/, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
     });
 
     setCustomerInfo(newCustomerInfo);
     console.log('Parsed Information:', newCustomerInfo);
   };
 
-  const calculateTotal = (info) => {
-    const subtotal = parseFloat(info.productCost) || 0;
-    const shipping = parseFloat(info.shippingCost) || 0;
-    const ivaAmount = applyIVA ? subtotal * 0.13 : 0; // Only apply IVA if checkbox is checked
+  const calculateTotal = (info: typeof productInfo) => {
+    const subtotal = parseFloat(info.productCost.toString()) || 0;
+    const shipping = parseFloat(info.shippingCost.toString()) || 0;
+    const ivaAmount = applyIVA ? subtotal * 0.13 : 0;
     const total = subtotal + shipping + ivaAmount;
 
     return {
@@ -122,7 +133,7 @@ const SalesForm = () => {
     };
   };
 
-  const handleProductInfoChange = (e) => {
+  const handleProductInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setProductInfo(prev => {
       const newInfo = {
@@ -133,7 +144,7 @@ const SalesForm = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ type: '', message: '' });

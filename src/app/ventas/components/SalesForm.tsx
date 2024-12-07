@@ -11,8 +11,11 @@ interface CustomerInfo {
   canton: string;
   district: string;
   email: string;
+  username: string;  // Add this
   address: string;
   business: string;
+  fechaEsperada: string;
+  diaVenta: string;
 }
 
 const SalesForm = () => {
@@ -23,8 +26,11 @@ const SalesForm = () => {
     canton: '',
     district: '',
     email: '',
+    username: '',
     address: '',
-    business: ''
+    business: '',
+    fechaEsperada: '',
+    diaVenta: new Date().toISOString().split('T')[0],
   });
   
   const [productInfo, setProductInfo] = useState({
@@ -37,7 +43,8 @@ const SalesForm = () => {
     iva: 0,
     total: 0,
     vendedor: '',
-    mensajeria: ''
+    mensajeria: '',
+    tamano: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,8 +53,7 @@ const SalesForm = () => {
   const [applyIVA, setApplyIVA] = useState(false);
 
   // Replace this URL with your Google Apps Script deployment URL
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTb8ONKeLwsUVl4J465Q3VCKqsaAfUbePWHxo4mramQ9i33z3c_23_5dCqlNmfIp5T/exec';
-
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzqL_E7bmOqnXK8cXpafjENjl-NHrFJ_6NAxzahTChv30SnjjenopkwWemzqwLP4BdS/exec';
   const parseCustomerText = (text: string) => {
     setRawCustomerText(text);
 
@@ -104,7 +110,10 @@ const SalesForm = () => {
       district: findMatch(patterns.district, normalizedText),
       email: findMatch(patterns.email, normalizedText),
       address: findMatch(patterns.address, normalizedText),
-      business: customerInfo.business
+      username: findMatch(patterns.name, normalizedText),
+      business: customerInfo.business,
+      fechaEsperada: '',
+      diaVenta: new Date().toISOString().split('T')[0],
     };
 
     (Object.keys(newCustomerInfo) as Array<keyof CustomerInfo>).forEach(key => {
@@ -174,13 +183,22 @@ const SalesForm = () => {
             
             // Reset forms with all fields
             setCustomerInfo({
-                name: '', phone: '', province: '', canton: '',
-                district: '', email: '', address: '', business: ''
-            });
+              name: '', 
+              phone: '', 
+              province: '', 
+              canton: '',
+              district: '', 
+              email: '', 
+              username: '',  // Add this
+              address: '', 
+              business: '',
+              fechaEsperada: '',
+              diaVenta: new Date().toISOString().split('T')[0],
+          });
             setProductInfo({
                 type: '', color: '', packaging: '', comments: '',
                 productCost: 0, shippingCost: 0, iva: 0, total: 0,
-                vendedor: '', mensajeria: ''
+                vendedor: '', mensajeria: '', tamano: '',
             });
             
             setRawCustomerText(''); // Clear the raw text input
@@ -201,7 +219,7 @@ const SalesForm = () => {
     <div className="w-full max-w-4xl mx-auto p-4">
       <Card>
         <CardHeader>
-          <CardTitle>Betsy - Para ventas</CardTitle>
+          <CardTitle>Betsy - Sistema de Ventas</CardTitle>
         </CardHeader>
         <CardContent>
           {submitStatus.message && (
@@ -293,6 +311,16 @@ const SalesForm = () => {
                             placeholder="No detectado"
                         />
                     </div>
+                    <div>
+                        <label className="block text-sm text-gray-600">Usuario</label>
+                        <input
+                            type="text"
+                            className="w-full p-2 bg-white border rounded"
+                            value={customerInfo.username}
+                            onChange={(e) => setCustomerInfo({...customerInfo, username: e.target.value})}
+                            placeholder="Usuario de Instagram/Facebook"
+                        />
+                    </div>
                     <div className="col-span-2">
                         <label className="block text-sm text-gray-600">Dirección</label>
                         <textarea
@@ -322,6 +350,30 @@ const SalesForm = () => {
               </select>
             </div>
 
+            {/* Add date fields after the business section */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block font-medium">Fecha de Venta</label>
+                <input
+                  type="date"
+                  className="w-full p-2 border rounded"
+                  value={customerInfo.diaVenta}
+                  onChange={(e) => setCustomerInfo({...customerInfo, diaVenta: e.target.value})}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block font-medium">Fecha Esperada de Entrega</label>
+                <input
+                  type="date"
+                  className="w-full p-2 border rounded"
+                  value={customerInfo.fechaEsperada}
+                  onChange={(e) => setCustomerInfo({...customerInfo, fechaEsperada: e.target.value})}
+                  required
+                />
+              </div>
+            </div>
+
             {/* Product Information */}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -345,6 +397,18 @@ const SalesForm = () => {
                   value={productInfo.color}
                   onChange={handleProductInfoChange}
                   required
+                />
+              </div>
+              <div>
+                <label className="block font-medium">Tamaño</label>
+                <input
+                  type="text"
+                  name="tamano"
+                  className="w-full p-2 border rounded"
+                  value={productInfo.tamano}
+                  onChange={handleProductInfoChange}
+                  required
+                  placeholder="Escriba el tamaño..."
                 />
               </div>
             </div>

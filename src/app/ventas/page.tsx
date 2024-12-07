@@ -1,11 +1,11 @@
-// src/app/ventas/page.tsx
-"use client";
-import SalesForm from './components/SalesForm';
-import RecentSales from '../components/RecentSales';
-import { Home } from 'lucide-react'; // Import Home icon
-import { useRouter } from 'next/navigation'; // Import useRouter
+'use client';
 
-export default function VentasPage() {
+import { Home } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import SalesForm from './components/SalesForm';
+import RecentSales from './components/RecentSales';
+
+export default function VentasContent() {
   const router = useRouter();
 
   return (

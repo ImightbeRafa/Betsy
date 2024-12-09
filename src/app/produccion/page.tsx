@@ -1,7 +1,17 @@
+import { ProductionDashboard } from './components/ProduccionDashboard';
+import  HomeButton  from '@/app/components/ui/HomeButtom';
 
-import ProductionContent from './production-content';
-
-// Server Component
 export default function ProductionPage() {
-  return <ProductionContent />;
+  return (
+    <>
+      <nav className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-3">
+          <HomeButton />
+        </div>
+      </nav>
+      <div className="min-h-screen bg-gray-50">
+        <ProductionDashboard />
+      </div>
+    </>
+  );
 }

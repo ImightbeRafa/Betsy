@@ -1,3 +1,4 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
 const CompressionPlugin = require('compression-webpack-plugin');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
@@ -9,7 +10,7 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
-  
+
   // Domain configuration
   images: {
     domains: ['lh3.googleusercontent.com', 'laplacelab.xyz'],
@@ -44,7 +45,7 @@ const nextConfig = {
           }
         ]
       }
-    ]
+    ];
   },
 
   webpack: (config, { dev, isServer }) => {
@@ -69,7 +70,7 @@ const nextConfig = {
         splitChunks: {
           chunks: 'all',
           minSize: 10000,
-          maxSize: 20000000, // 20MB to be safe
+          maxSize: 20000000,
           cacheGroups: {
             vendor: {
               name: (module) => {

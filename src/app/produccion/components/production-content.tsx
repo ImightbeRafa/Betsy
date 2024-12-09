@@ -1,22 +1,16 @@
 // Client Component
 'use client';
-import { useRouter } from 'next/navigation';
-import { Home, Construction } from 'lucide-react';
+import HomeButton from '@/app/components/ui/HomeButtom';
+import { Construction } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card";
 
 function ProductionContent() {
-  const router = useRouter();
-
   return (
     <div className="relative min-h-screen bg-gray-50">
       {/* Home Button */}
-      <button
-        onClick={() => router.push('/')}
-        className="absolute top-4 left-4 p-2 flex items-center gap-2 text-gray-600 hover:text-gray-900 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all"
-      >
-        <Home size={20} />
-        <span>Inicio</span>
-      </button>
+      <div className="absolute top-4 left-4">
+        <HomeButton />
+      </div>
 
       {/* Work in Progress Content */}
       <div className="flex items-center justify-center h-screen p-4">

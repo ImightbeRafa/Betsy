@@ -95,7 +95,7 @@ export default function HomeContent() {
         {/* Footer Section */}
         <footer className="mt-16 text-center text-gray-500 text-sm">
           <p>© 2024 Betsy CRM. Hecho por Rafa:) </p>
-          <p>v0.0.2 </p>
+          <p>v0.1.1 </p>
         </footer>
       </main>
     </div>

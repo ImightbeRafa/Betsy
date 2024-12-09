@@ -1,5 +1,4 @@
-import './globals.css'
-import { AuthProvider } from './providers'
+import './components/globals.css'
 
 export default function RootLayout({
   children,
@@ -9,7 +8,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-background">
-        <AuthProvider>{children}</AuthProvider>
+        {children}
       </body>
     </html>
   )

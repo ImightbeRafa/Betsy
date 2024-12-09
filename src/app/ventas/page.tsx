@@ -1,31 +1,26 @@
-'use client';
+"use client";
+import React from 'react';
+import SalesForm from '@/app/ventas/components/SalesForm';
+import { SalesDashboard } from '@/app/ventas/components/SalesDashboard';
+import DailyStats from '@/app/ventas/components/DailyStats';
 
-import { Home } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import SalesForm from './components/SalesForm';
-import RecentSales from './components/RecentSales';
-
-export default function VentasContent() {
-  const router = useRouter();
-
+export default function VentasPage() {
   return (
-    <div className="relative min-h-screen">
-      {/* Home Button */}
-      <button
-        onClick={() => router.push('/')}
-        className="absolute top-4 left-4 p-2 flex items-center gap-2 text-gray-600 hover:text-gray-900 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-all"
-      >
-        <Home size={20} />
-        <span>Inicio</span>
-      </button>
-
-      {/* Main Content */}
-      <div className="flex gap-6 p-6 pt-16">
-        <div className="flex-1">
+    <div className="container mx-auto p-4">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Sales Form Section */}
+        <div className="lg:w-1/2">
           <SalesForm />
         </div>
-        <div className="w-80">
-          <RecentSales />
+        
+        {/* Dashboard Section */}
+        <div className="lg:w-1/2 space-y-6">
+          <div className="w-full">
+            <DailyStats />
+          </div>
+          <div className="w-full">
+            <SalesDashboard />
+          </div>
         </div>
       </div>
     </div>

@@ -28,38 +28,30 @@ interface Sale {
   status: string;
   date: string;
   messenger: string;
+  orderType: 'EA' | 'RA';
 }
 
 const RecentSales = () => {
-  const [recentSales, setRecentSales] = useState<Sale[]>([]);
+  const [sales, setSales] = useState<Sale[]>([]);
   const [dailyTotal, setDailyTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
 
-  // Same URL as your form
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzqL_E7bmOqnXK8cXpafjENjl-NHrFJ_6NAxzahTChv30SnjjenopkwWemzqwLP4BdS/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzvKZLkLNWbhOd2v0NEAohlK2eSG9wWl7hJG9Fn4vcREuN3aMZ-syjFeesFZQw9aCG_/exec';
+
   const fetchSales = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getRecentSales`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
+      const response = await fetch(GOOGLE_SCRIPT_URL);
       const data = await response.json();
-      
+
       if (data.status === 'success') {
-        setRecentSales(data.sales || []);
-        setDailyTotal(data.dailyTotal || 0);
+        setSales(data.sales);
+        setDailyTotal(data.dailyTotal);
+        setError('');
       } else {
-        setError('Error loading data');
+        throw new Error(data.message || 'Error fetching data');
       }
     } catch (error) {
       console.error('Error fetching sales:', error);
@@ -115,8 +107,8 @@ const RecentSales = () => {
             <p className="text-red-500 text-center">{error}</p>
           ) : (
             <div className="space-y-4">
-              {recentSales.length > 0 ? (
-                recentSales.map((sale) => (
+              {sales.length > 0 ? (
+                sales.map((sale) => (
                   <div 
                     key={sale.orderId} 
                     className="border-b pb-3 last:border-0 cursor-pointer hover:bg-gray-50 p-2 rounded"

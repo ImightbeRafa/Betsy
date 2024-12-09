@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-select": "2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "ajv": "8.17.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.298.0",
+    "lucide-react": "0.298.0",
     "next": "14.0.4",
     "next-auth": "^4.24.11",
     "react": "^18.2.0",

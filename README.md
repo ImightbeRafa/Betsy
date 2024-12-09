@@ -1,74 +1,79 @@
-# Betsy CRM System
+# Sistema CRM Betsy
 
-A modern, web-based CRM system built for managing sales and production operations, with a focus on user-friendly data entry and real-time sales tracking.
+Un sistema CRM moderno y basado en la web diseñado para gestionar operaciones de ventas y producción, con un enfoque en la entrada de datos fácil de usar y el seguimiento de ventas en tiempo real.
 
-## 🚀 Features
+## 🚀 Características
 
-### Sales Management
-- 📝 Customer information capture and storage
-- 🛍️ Product ordering system
-- 💰 Real-time price calculation with IVA
-- 🚚 Shipping cost management
-- 📊 Daily sales tracking
-- 📋 Recent orders display
+### Gestión de Ventas
+- 📝 Captura y almacenamiento de información del cliente
+- 🛍️ Sistema de pedidos de productos
+- 💰 Cálculo de precios en tiempo real con IVA
+- 🚚 Gestión de costos de envío
+- 📊 Seguimiento de ventas diarias
+- 📋 Visualización de pedidos recientes
 
-### Order Tracking
-- 🏷️ Unique order ID generation
-- 📌 Status tracking
-- 📦 Delivery information management
-- 📜 Order history
+### Seguimiento de Pedidos
+- 🏷️ Generación de ID de pedido único
+- 📌 Seguimiento de estado
+- 📦 Gestión de información de entrega
+- 📜 Historial de pedidos
 
-### Financial Management
-- 💵 Daily sales totals
-- 🧮 Automatic IVA calculation
-- 📊 Shipping cost tracking
-- 💰 Product cost management
+### Gestión Financiera
+- 💵 Totales de ventas diarias
+- 🧮 Cálculo automático de IVA
+- 📊 Seguimiento de costos de envío
+- 💰 Gestión de costos de productos
 
-## 🛠️ Technical Stack
+## 🛠️ Stack Técnico
 
-- **Frontend**: Next.js 14 with TypeScript
-- **Styling**: Tailwind CSS with shadcn/ui components
+- **Frontend**: Next.js 14 con TypeScript
+- **Estilo**: Tailwind CSS con componentes de shadcn/ui
 - **Backend**: Google Apps Script
-- **Database**: Google Sheets
-- **Deployment**: Cloudflare Pages
+- **Base de Datos**: Google Sheets
+- **Despliegue**: Cloudflare Pages
 
-## 🚀 Getting Started
+## 🚀 Guía de Inicio
 
-### Prerequisites
+### Requisitos Previos
 - Node.js >=18.18.0
 - npm
-- Google account for Sheets access
+- Cuenta de Google para acceso a Sheets
 
-### Installation
+### Instalación
 
-1. Clone the repository:
+1. Clona el repositorio:
 
-bash
-git clone [repository-url]
-cd Betsy/crm
+   ```bash
+   git clone [repository-url]
+   cd Betsy/crm
+   ```
 
-2. Install dependencies:
+2. Instala las dependencias:
 
-bash
-npm install
+   ```bash
+   npm install
+   ```
 
-3. Configure environment variables:
+3. Configura las variables de entorno:
 
-bash
-cp .env.example .env.local
-Update with your Google Apps Script deployment URL
+   ```bash
+   cp .env.example .env.local
+   # Actualiza con la URL de despliegue de tu Google Apps Script
+   ```
 
-bash
-npm run dev
+4. Inicia el servidor de desarrollo:
 
+   ```bash
+   npm run dev
+   ```
 
-### Google Sheets Setup
-1. Create a new Google Sheet
-2. Set up the required columns as per the data structure
-3. Deploy the Google Apps Script with provided code
-4. Update the deployment URL in your environment variables
+### Configuración de Google Sheets
+1. Crea una nueva hoja de cálculo de Google.
+2. Configura las columnas requeridas según la estructura de datos.
+3. Despliega el Google Apps Script con el código proporcionado.
+4. Actualiza la URL de despliegue en tus variables de entorno.
 
-## 📁 Project Structure
+## 📁 Estructura del Proyecto
 
 Betsy/
 └── crm/
@@ -99,74 +104,73 @@ Betsy/
     ├── tailwind.config.ts
     └── tsconfig.json
 
+## 🔧 Desarrollo
 
-## 🔧 Development
+### Construcción para Producción
 
-### Building for Production
-
-bash
+```bash
 npm run build
 npm start
+```
 
+### Estructura de Datos
 
-### Data Structure
+#### Información del Cliente
+- Nombre
+- Teléfono
+- Provincia
+- Cantón
+- Distrito
+- Correo Electrónico
+- Nombre de Usuario
+- Dirección
+- Negocio
 
-#### Customer Information
-- Name
-- Phone
-- Province
-- Canton
-- District
-- Email
-- Username
-- Address
-- Business
-
-#### Product Information
-- Type
+#### Información del Producto
+- Tipo
 - Color
-- Size
-- Packaging
-- Comments
-- Product Cost
-- Shipping Cost
+- Tamaño
+- Empaque
+- Comentarios
+- Costo del Producto
+- Costo de Envío
 - IVA
 - Total
 
-## ✨ Current Status
+## ✨ Estado Actual
 
-### Completed Features
-- ✅ Basic sales form functionality
-- ✅ Google Sheets integration
-- ✅ Recent sales display
-- ✅ Navigation structure
-- ✅ Order creation and storage
+### Características Completadas
+- ✅ Funcionalidad básica del formulario de ventas
+- ✅ Integración con Google Sheets
+- ✅ Visualización de ventas recientes
+- ✅ Estructura de navegación
+- ✅ Creación y almacenamiento de pedidos
 
-### In Development
-- 🚧 Production module
-- 🚧 Enhanced reporting
-- 🚧 User authentication
-- 🚧 Advanced search functionality
+### En Desarrollo
+- 🚧 Módulo de producción
+- 🚧 Reportes mejorados
+- 🚧 Autenticación de usuarios
+- 🚧 Funcionalidad de búsqueda avanzada
 
-## 🤝 Contributing
+## 🤝 Contribuciones
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Haz un fork del repositorio
+2. Crea tu rama de características (`git checkout -b feature/amazing-feature`)
+3. Realiza tus cambios (`git commit -m 'Add some amazing feature'`)
+4. Sube a la rama (`git push origin feature/amazing-feature`)
+5. Abre una Pull Request
 
-## 📄 License
-[License Type] - See LICENSE.md for details
+## 📄 Licencia
+[Tipo de Licencia] - Consulta LICENSE.md para más detalles
 
-## 📞 Contact
-Project Maintainer - [Your Contact Information]
+## 📞 Contacto
+Mantenedor del Proyecto - [Tu Información de Contacto]
 
-## 🙏 Acknowledgments
-- [shadcn/ui](https://ui.shadcn.com/) for component library
-- Google Sheets for database functionality
-- Cloudflare for hosting
+## 🙏 Agradecimientos
+- [shadcn/ui](https://ui.shadcn.com/) por la biblioteca de componentes
+- Google Sheets por la funcionalidad de base de datos
+- Cloudflare por el alojamiento
 
 ---
 
-This documentation is maintained as part of the Betsy CRM project and will be updated as new features are developed.
+Esta documentación se mantiene como parte del proyecto Betsy CRM y se actualizará a medida que se desarrollen nuevas características.

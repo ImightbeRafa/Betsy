@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select";
+import { useSalesStream } from '@/app/api/sales/useSalesStream';
 
 interface Sale {
   orderId: string;
@@ -50,6 +51,47 @@ export function SalesDashboard() {
   const [orderTypeFilter, setOrderTypeFilter] = useState<'ALL' | 'EA' | 'RA'>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Add real-time updates
+  useSalesStream({
+    onData: (text) => {
+      if (!text) return;
+      
+      const salesData = text.split(';').map((sale: string) => {
+        const [
+          orderId = '',
+          customerName = 'Sin nombre',
+          total = '0',
+          timestamp = '',
+          orderType = 'EA',
+          phone = '',
+          email = '',
+          address = '',
+          product = '',
+          status = 'Pendiente'
+        ] = sale.split('|');
+
+        return {
+          orderId: orderId || '',
+          customerName: customerName || 'Sin nombre',
+          total: Number(total) || 0,
+          timestamp: timestamp || new Date().toISOString(),
+          orderType: (orderType === 'RA' ? 'RA' : 'EA') as 'EA' | 'RA',
+          status: status || 'Pendiente',
+          phone: phone || '',
+          email: email || '',
+          address: address || '',
+          product: product || ''
+        };
+      });
+      setSales(salesData);
+      setLoading(false);
+    },
+    onError: (errorMessage) => {
+      setError(errorMessage);
+      setLoading(false);
+    }
+  });
+
   const fetchSales = async () => {
     try {
       setLoading(true);
@@ -62,8 +104,7 @@ export function SalesDashboard() {
       
       const text = await response.text();
       if (!text || text.startsWith('ERROR:')) {
-        setError(text.substring(6) || 'Invalid response from server');
-        return;
+        throw new Error(text.substring(6) || 'Invalid response from server');
       }
 
       const salesData = text.split(';').map((sale: string) => {

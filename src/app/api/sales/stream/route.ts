@@ -17,7 +17,11 @@ export async function GET() {
   
     const stream = new ReadableStream({
       async start(controller) {
+        let isActive = true;
+        
         const sendUpdate = async () => {
+          if (!isActive) return;
+          
           try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_SCRIPT_URL}?type=list`);
             
@@ -33,10 +37,14 @@ export async function GET() {
           }
         };
   
+        // Initial update
         await sendUpdate();
+        
+        // Set up periodic updates
         const interval = setInterval(sendUpdate, 30000);
         
         return () => {
+          isActive = false;
           clearInterval(interval);
           controller.close();
         };
@@ -44,4 +52,4 @@ export async function GET() {
     });
   
     return new Response(stream, { headers });
-  }
+}

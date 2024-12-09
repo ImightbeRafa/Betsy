@@ -1,0 +1,22 @@
+{
+    "version": 2,
+    "buildCommand": "npm run build",
+    "devCommand": "npm run dev",
+    "installCommand": "npm install",
+    "framework": "nextjs",
+    "regions": ["sfo1"],
+    "env": {
+      "NEXT_PUBLIC_SCRIPT_URL": "@next_public_script_url"
+    },
+    "headers": [
+      {
+        "source": "/api/(.*)",
+        "headers": [
+          { "key": "Access-Control-Allow-Credentials", "value": "true" },
+          { "key": "Access-Control-Allow-Origin", "value": "https://laplacelab.xyz" },
+          { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" },
+          { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
+        ]
+      }
+    ]
+  }

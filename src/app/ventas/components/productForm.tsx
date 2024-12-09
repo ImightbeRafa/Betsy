@@ -192,7 +192,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
             onChange={handleInputChange}
             className="w-full p-2 border rounded"
             min="0"
-            step="100"
+            step="any"
             required
           />
         </div>
@@ -207,7 +207,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
               onChange={handleInputChange}
               className="w-full p-2 border rounded"
               min="0"
-              step="100"
+              step="any"
             />
           </div>
         )}

@@ -10,12 +10,41 @@ const nextConfig = {
   compress: true,
   reactStrictMode: true,
   
-  // Optimize images
+  // Domain configuration
   images: {
+    domains: ['lh3.googleusercontent.com', 'laplacelab.xyz'],
     unoptimized: true,
-    domains: ['lh3.googleusercontent.com'],
-    deviceSizes: [640, 828, 1080, 1200],
-    imageSizes: [16, 32, 48, 64],
+  },
+
+  // Headers for security
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          }
+        ]
+      }
+    ]
   },
 
   webpack: (config, { dev, isServer }) => {

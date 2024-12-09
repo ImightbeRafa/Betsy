@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
+import { useSalesStream } from '@/app/api/sales/useSalesStream';
 
 interface DailyStats {
   totalSales: number;
@@ -27,62 +28,47 @@ export default function DailyStats() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const response = await fetch('/api/sales/list');
-        if (!response.ok) {
-          throw new Error('Failed to fetch stats');
+  useSalesStream({
+    onData: (text) => {
+      if (!text) return;
+      
+      let eaCount = 0, eaAmount = 0, raCount = 0, raAmount = 0;
+      
+      text.split(';').forEach(sale => {
+        if (!sale.trim()) return;
+        
+        const [
+          _orderId = '',
+          _customerName = '',
+          total = '0',
+          _timestamp = '',
+          orderType = 'EA'
+        ] = sale.split('|');
+        
+        if (orderType === 'EA') {
+          eaCount++;
+          eaAmount += Number(total) || 0;
+        } else if (orderType === 'RA') {
+          raCount++;
+          raAmount += Number(total) || 0;
         }
-        const text = await response.text();
-        if (!text || text.startsWith('ERROR:')) {
-          throw new Error(text.substring(6) || 'Invalid response from server');
-        }
-        
-        let eaCount = 0, eaAmount = 0, raCount = 0, raAmount = 0;
-        
-        text.split(';').forEach(sale => {
-          if (!sale.trim()) return;
-          
-          const [
-            _orderId = '',
-            _customerName = '',
-            total = '0',
-            _timestamp = '',
-            orderType = 'EA'
-          ] = sale.split('|');
-          
-          if (orderType === 'EA') {
-            eaCount++;
-            eaAmount += Number(total) || 0;
-          } else if (orderType === 'RA') {
-            raCount++;
-            raAmount += Number(total) || 0;
-          }
-        });
-        
-        setStats({
-          eaSales: eaCount,
-          eaAmount: eaAmount,
-          raSales: raCount,
-          raAmount: raAmount,
-          totalSales: eaCount + raCount,
-          totalAmount: eaAmount + raAmount
-        });
-      } catch (error) {
-        console.error('Error fetching daily stats:', error);
-        setError('Error loading stats');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-    const interval = setInterval(fetchStats, 300000);
-    return () => clearInterval(interval);
-  }, []);
+      });
+      
+      setStats({
+        eaSales: eaCount,
+        eaAmount: eaAmount,
+        raSales: raCount,
+        raAmount: raAmount,
+        totalSales: eaCount + raCount,
+        totalAmount: eaAmount + raAmount
+      });
+      setLoading(false);
+    },
+    onError: (errorMessage) => {
+      setError(errorMessage);
+      setLoading(false);
+    }
+  });
 
   if (loading) {
     return (

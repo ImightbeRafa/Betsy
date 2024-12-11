@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
-import { useSalesStream } from '@/app/api/sales/useSalesStream';
+import { useSalesStream } from '@/app/hooks/useSalesStream';
+import { ArrowUpIcon, ArrowDownIcon } from 'lucide-react';
 
 interface DailyStats {
   totalSales: number;
@@ -16,61 +17,53 @@ interface DailyStats {
   raAmount: number;
 }
 
+function isToday(dateString: string): boolean {
+  const saleDate = new Date(dateString);
+  const today = new Date();
+  
+  return saleDate.getDate() === today.getDate() &&
+         saleDate.getMonth() === today.getMonth() &&
+         saleDate.getFullYear() === today.getFullYear();
+}
+
 export default function DailyStats() {
-  const [stats, setStats] = useState<DailyStats>({
-    totalSales: 0,
-    totalAmount: 0,
-    eaSales: 0,
-    eaAmount: 0,
-    raSales: 0,
-    raAmount: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { sales, isLoading, error } = useSalesStream();
 
-  useSalesStream({
-    onData: (text) => {
-      if (!text) return;
-      
-      let eaCount = 0, eaAmount = 0, raCount = 0, raAmount = 0;
-      
-      text.split(';').forEach(sale => {
-        if (!sale.trim()) return;
-        
-        const [
-          _orderId = '',
-          _customerName = '',
-          total = '0',
-          _timestamp = '',
-          orderType = 'EA'
-        ] = sale.split('|');
-        
-        if (orderType === 'EA') {
-          eaCount++;
-          eaAmount += Number(total) || 0;
-        } else if (orderType === 'RA') {
-          raCount++;
-          raAmount += Number(total) || 0;
-        }
-      });
-      
-      setStats({
-        eaSales: eaCount,
-        eaAmount: eaAmount,
-        raSales: raCount,
-        raAmount: raAmount,
-        totalSales: eaCount + raCount,
-        totalAmount: eaAmount + raAmount
-      });
-      setLoading(false);
-    },
-    onError: (errorMessage) => {
-      setError(errorMessage);
-      setLoading(false);
-    }
-  });
+  // Calculate daily stats from filtered sales
+  const stats = React.useMemo(() => {
+    const initialStats: DailyStats = {
+      totalSales: 0,
+      totalAmount: 0,
+      eaSales: 0,
+      eaAmount: 0,
+      raSales: 0,
+      raAmount: 0,
+    };
 
-  if (loading) {
+    if (!sales?.length) return initialStats;
+
+    return sales.reduce((acc, sale) => {
+      // Skip if not today's sale
+      if (!isToday(sale.timestamp)) return acc;
+
+      const amount = Number(sale.total) || 0;
+
+      if (sale.orderType === 'EA') {
+        acc.eaSales++;
+        acc.eaAmount += amount;
+      } else if (sale.orderType === 'RA') {
+        acc.raSales++;
+        acc.raAmount += amount;
+      }
+
+      acc.totalSales++;
+      acc.totalAmount += amount;
+
+      return acc;
+    }, initialStats);
+  }, [sales]);
+
+  if (isLoading) {
     return (
       <Card>
         <CardHeader className="pb-2">
@@ -107,29 +100,48 @@ export default function DailyStats() {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Resumen del Día</CardTitle>
+        <CardTitle className="text-lg font-semibold">
+          Resumen del Día
+          <span className="ml-2 text-sm text-muted-foreground">
+            {new Date().toLocaleDateString('es-CR', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </span>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">Total</p>
-            <p className="text-xl font-bold">₡{stats.totalAmount.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              Total del Día
+              {stats.totalAmount > 0 && <ArrowUpIcon className="w-4 h-4 text-green-500" />}
+            </p>
+            <p className="text-2xl font-bold">₡{stats.totalAmount.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground">
               {stats.totalSales} {stats.totalSales === 1 ? 'orden' : 'órdenes'}
             </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Envíos</p>
-            <p className="text-xl font-bold">₡{stats.eaAmount.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              Envíos (EA)
+              {stats.eaSales > 0 && <ArrowUpIcon className="w-4 h-4 text-green-500" />}
+            </p>
+            <p className="text-2xl font-bold">₡{stats.eaAmount.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground">
-              {stats.eaSales} EA
+              {stats.eaSales} {stats.eaSales === 1 ? 'envío' : 'envíos'}
             </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Retiros</p>
-            <p className="text-xl font-bold">₡{stats.raAmount.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              Retiros (RA)
+              {stats.raSales > 0 && <ArrowUpIcon className="w-4 h-4 text-green-500" />}
+            </p>
+            <p className="text-2xl font-bold">₡{stats.raAmount.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground">
-              {stats.raSales} RA
+              {stats.raSales} {stats.raSales === 1 ? 'retiro' : 'retiros'}
             </p>
           </div>
         </div>

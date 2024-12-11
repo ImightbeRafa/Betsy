@@ -1,19 +1,20 @@
 export interface CustomerInfo {
-    name: string;
-    phone: string;
-    province: string;
-    canton: string;
-    district: string;
-    email: string;
-    username: string;
-    address: string;
-    business: string;
-    fechaEsperada: string;
-    fechaAcordada: string;
-    fechaRetirada: string;
-    diaVenta: string;
-    orderType: 'EA' | 'RA';
-  }
+  name: string;
+  phone: string;
+  province: string;
+  canton: string;
+  district: string;
+  email: string;
+  username: string;
+  address: string;
+  business: string;
+  funnel: 'Instagram' | 'Whatsapp' | ''; // Add this line
+  fechaEsperada: string;
+  fechaAcordada: string;
+  fechaRetirada: string;
+  diaVenta: string;
+  orderType: 'EA' | 'RA';
+}
   
   export interface ProductInfo {
     type: string;

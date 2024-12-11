@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -28,7 +28,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select";
-import { useSalesStream } from '@/app/api/sales/useSalesStream';
+import { Badge } from "@/app/components/ui/badge";
+import { useSalesStream } from '@/app/hooks/useSalesStream';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Loader2 } from 'lucide-react';
 
 interface Sale {
   orderId: string;
@@ -44,108 +48,13 @@ interface Sale {
 }
 
 export function SalesDashboard() {
-  const [sales, setSales] = useState<Sale[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
   const [orderTypeFilter, setOrderTypeFilter] = useState<'ALL' | 'EA' | 'RA'>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Add real-time updates
-  useSalesStream({
-    onData: (text) => {
-      if (!text) return;
-      
-      const salesData = text.split(';').map((sale: string) => {
-        const [
-          orderId = '',
-          customerName = 'Sin nombre',
-          total = '0',
-          timestamp = '',
-          orderType = 'EA',
-          phone = '',
-          email = '',
-          address = '',
-          product = '',
-          status = 'Pendiente'
-        ] = sale.split('|');
-
-        return {
-          orderId: orderId || '',
-          customerName: customerName || 'Sin nombre',
-          total: Number(total) || 0,
-          timestamp: timestamp || new Date().toISOString(),
-          orderType: (orderType === 'RA' ? 'RA' : 'EA') as 'EA' | 'RA',
-          status: status || 'Pendiente',
-          phone: phone || '',
-          email: email || '',
-          address: address || '',
-          product: product || ''
-        };
-      });
-      setSales(salesData);
-      setLoading(false);
-    },
-    onError: (errorMessage) => {
-      setError(errorMessage);
-      setLoading(false);
-    }
+  const { sales, isLoading, error, refresh, stats } = useSalesStream({
+    pollingInterval: 30000 // 30 seconds
   });
-
-  const fetchSales = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      const response = await fetch('/api/sales/list');
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch sales');
-      }
-      
-      const text = await response.text();
-      if (!text || text.startsWith('ERROR:')) {
-        throw new Error(text.substring(6) || 'Invalid response from server');
-      }
-
-      const salesData = text.split(';').map((sale: string) => {
-        const [
-          orderId = '',
-          customerName = 'Sin nombre',
-          total = '0',
-          timestamp = '',
-          orderType = 'EA',
-          phone = '',
-          email = '',
-          address = '',
-          product = '',
-          status = 'Pendiente'
-        ] = sale.split('|');
-
-        return {
-          orderId: orderId || '',
-          customerName: customerName || 'Sin nombre',
-          total: Number(total) || 0,
-          timestamp: timestamp || new Date().toISOString(),
-          orderType: (orderType === 'RA' ? 'RA' : 'EA') as 'EA' | 'RA',
-          status: status || 'Pendiente',
-          phone: phone || '',
-          email: email || '',
-          address: address || '',
-          product: product || ''
-        };
-      });
-      setSales(salesData);
-    } catch (error) {
-      console.error('Error fetching sales:', error);
-      setError('Error loading sales data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSales();
-  }, []);
 
   const filteredSales = sales
     .filter(sale => {
@@ -160,108 +69,171 @@ export function SalesDashboard() {
     .slice(0, 10);
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold">Últimas Ventas</CardTitle>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={fetchSales}
-            disabled={loading}
-          >
-            {loading ? 'Actualizando...' : 'Actualizar'}
-          </Button>
-        </div>
-        <div className="flex gap-2 mt-2">
-          <Select
-            value={orderTypeFilter}
-            onValueChange={(value: 'ALL' | 'EA' | 'RA') => setOrderTypeFilter(value)}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">Todas</SelectItem>
-              <SelectItem value="EA">Envíos</SelectItem>
-              <SelectItem value="RA">Retiros</SelectItem>
-            </SelectContent>
-          </Select>
-          <Input
-            placeholder="Buscar..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-[200px]"
-          />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Orden</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
+    <div className="space-y-4">
+      {/* Stats Overview */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold">₡{stats.totalAmount.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">
+              Total en ventas
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold">{stats.eaOrders}</div>
+            <p className="text-xs text-muted-foreground">
+              Envíos (EA)
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-2xl font-bold">{stats.raOrders}</div>
+            <p className="text-xs text-muted-foreground">
+              Retiros (RA)
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Sales Table */}
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg font-semibold">Últimas Ventas</CardTitle>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={refresh}
+              disabled={isLoading}
+              className="gap-2"
+            >
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isLoading ? 'Actualizando...' : 'Actualizar'}
+            </Button>
+          </div>
+          <div className="flex gap-2 mt-2">
+            <Select
+              value={orderTypeFilter}
+              onValueChange={(value: 'ALL' | 'EA' | 'RA') => setOrderTypeFilter(value)}
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Todas</SelectItem>
+                <SelectItem value="EA">Envíos</SelectItem>
+                <SelectItem value="RA">Retiros</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              placeholder="Buscar por nombre, orden o teléfono..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-[300px]"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={4} className="py-8">
-                    <div className="flex justify-center">
-                      <div className="animate-pulse space-y-4 w-full max-w-md">
-                        {[...Array(5)].map((_, i) => (
-                          <div key={i} className="flex justify-between">
-                            <div className="h-4 bg-gray-200 rounded w-20"></div>
-                            <div className="h-4 bg-gray-200 rounded w-32"></div>
-                            <div className="h-4 bg-gray-200 rounded w-24"></div>
-                          </div>
-                        ))}
+                  <TableHead>Orden</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Tiempo</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-8">
+                      <div className="flex justify-center items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Cargando ventas...</span>
                       </div>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : error ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center text-red-500 py-8">
-                    {error}
-                  </TableCell>
-                </TableRow>
-              ) : filteredSales.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center py-8">
-                    No se encontraron ventas
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredSales.map((sale) => (
-                  <TableRow key={sale.orderId}>
-                    <TableCell>{sale.orderId}</TableCell>
-                    <TableCell>{sale.customerName}</TableCell>
-                    <TableCell>₡{sale.total.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedSale(sale)}
-                      >
-                        Ver
-                      </Button>
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center text-red-500 py-8">
+                      {error}
+                    </TableCell>
+                  </TableRow>
+                ) : filteredSales.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      No se encontraron ventas
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredSales.map((sale) => (
+                    <TableRow key={sale.orderId}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span>{sale.orderId}</span>
+                          <Badge variant={sale.orderType === 'EA' ? 'default' : 'secondary'}>
+                            {sale.orderType}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{sale.customerName}</div>
+                          <div className="text-sm text-muted-foreground">{sale.phone}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">₡{sale.total.toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Badge variant={
+                          sale.status === 'Pendiente' ? 'warning' :
+                          sale.status === 'Completado' ? 'success' : 'default'
+                        }>
+                          {sale.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {formatDistanceToNow(new Date(sale.timestamp), { 
+                          addSuffix: true,
+                          locale: es 
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedSale(sale)}
+                        >
+                          Ver
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
       <Dialog open={!!selectedSale} onOpenChange={() => setSelectedSale(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Detalles de la Orden: {selectedSale?.orderId}</DialogTitle>
+            <DialogTitle>
+              <div className="flex items-center gap-2">
+                <span>Orden: {selectedSale?.orderId}</span>
+                {selectedSale && (
+                  <Badge variant={selectedSale.orderType === 'EA' ? 'default' : 'secondary'}>
+                    {selectedSale.orderType}
+                  </Badge>
+                )}
+              </div>
+            </DialogTitle>
           </DialogHeader>
           {selectedSale && (
             <div className="grid grid-cols-2 gap-4">
@@ -279,11 +251,16 @@ export function SalesDashboard() {
               </div>
               <div>
                 <h4 className="font-semibold">Estado</h4>
-                <p>{selectedSale.status}</p>
+                <Badge variant={
+                  selectedSale.status === 'Pendiente' ? 'warning' :
+                  selectedSale.status === 'Completado' ? 'success' : 'default'
+                }>
+                  {selectedSale.status}
+                </Badge>
               </div>
               <div className="col-span-2">
                 <h4 className="font-semibold">Dirección</h4>
-                <p>{selectedSale.address}</p>
+                <p>{selectedSale.address || 'No especificada'}</p>
               </div>
               <div>
                 <h4 className="font-semibold">Producto</h4>
@@ -293,10 +270,16 @@ export function SalesDashboard() {
                 <h4 className="font-semibold">Total</h4>
                 <p className="font-bold">₡{selectedSale.total.toLocaleString()}</p>
               </div>
+              <div className="col-span-2 text-sm text-muted-foreground">
+                {formatDistanceToNow(new Date(selectedSale.timestamp), { 
+                  addSuffix: true,
+                  locale: es 
+                })}
+              </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { CustomerInfo } from './types';
+import { FunnelSelect } from '@/app/components/ui/FunnelSelect';
 
 interface CustomerFormProps {
   customerInfo: CustomerInfo;
@@ -281,6 +282,15 @@ const CustomerForm: React.FC<CustomerFormProps> = ({
           </>
         )}
       </div>
+
+      {/* Add FunnelSelect component here */}
+      <FunnelSelect
+        value={customerInfo.funnel}
+        onChange={(value) => onCustomerInfoChange({
+          ...customerInfo,
+          funnel: value
+        })}
+      />
     </div>
   );
 };

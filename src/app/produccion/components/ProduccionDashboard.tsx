@@ -1,4 +1,3 @@
-// components/ProductionDashboard.tsx
 "use client";
 import React from 'react';
 import { useState, useMemo } from 'react';
@@ -16,8 +15,9 @@ import { OrderList } from './OrderList';
 import { OrderDetails } from './OrderDetail';
 import { Sale } from '../types/sales';
 import { Loader2 } from 'lucide-react';
+import { useToast } from "@/app/hooks/use-toast";
 
-// Memoized filter function
+// Filter function
 const filterOrders = (orders: Sale[], statusFilter: string, searchTerm: string) => {
   const searchLower = searchTerm.toLowerCase();
   return orders.filter(order => {
@@ -32,7 +32,7 @@ const filterOrders = (orders: Sale[], statusFilter: string, searchTerm: string) 
   });
 };
 
-// Memoized component for the header section
+// Header component
 const DashboardHeader = React.memo(({ 
   loading, 
   searchTerm, 
@@ -83,24 +83,29 @@ export function ProductionDashboard() {
   const [selectedOrder, setSelectedOrder] = useState<Sale | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const { toast } = useToast();
 
   const { sales: orders, isLoading: loading, error, refresh } = useSalesStream({
     pollingInterval: 30000
   });
 
-  // Memoize filtered orders
   const filteredOrders = useMemo(() => 
     filterOrders(orders, statusFilter, searchTerm),
     [orders, statusFilter, searchTerm]
   );
 
-  // Memoize grouped orders
   const groupedOrders = useMemo(() => ({
     EA: filteredOrders.filter(order => order.orderType === 'EA'),
     RA: filteredOrders.filter(order => order.orderType === 'RA')
   }), [filteredOrders]);
 
-  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+  const handleStatusUpdate = async (newStatus: string) => {
+    if (selectedOrder) {
+      await updateOrderStatus(selectedOrder.orderId, newStatus);
+    }
+  };
+
+  const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       const response = await fetch('/api/orders/status', {
         method: 'POST',
@@ -114,15 +119,53 @@ export function ProductionDashboard() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || 'Failed to update status');
+        throw new Error('Failed to update status');
       }
 
       refresh();
-      setSelectedOrder(null);
+      toast({
+        title: "Estado actualizado",
+        description: "El estado de la orden ha sido actualizado exitosamente.",
+      });
     } catch (error) {
       console.error('Error updating status:', error);
-      throw error instanceof Error ? error : new Error('Failed to update status');
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo actualizar el estado de la orden.",
+      });
+    }
+  };
+
+  const handleOrderUpdate = async (orderId: string, updatedData: Partial<Sale>) => {
+    try {
+      const response = await fetch('/api/orders/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId,
+          ...updatedData
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update order');
+      }
+
+      refresh();
+      toast({
+        title: "Orden actualizada",
+        description: "La información de la orden ha sido actualizada exitosamente.",
+      });
+    } catch (error) {
+      console.error('Error updating order:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo actualizar la información de la orden.",
+      });
     }
   };
 
@@ -188,7 +231,8 @@ export function ProductionDashboard() {
         <OrderDetails
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
-          onUpdateStatus={(newStatus) => handleStatusUpdate(selectedOrder.orderId, newStatus)}
+          onUpdateStatus={handleStatusUpdate}
+          onUpdateOrder={handleOrderUpdate}
         />
       )}
     </div>

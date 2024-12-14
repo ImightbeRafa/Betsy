@@ -48,3 +48,6 @@ export interface RAOrder extends BaseOrder {
 }
 
 export type Sale = EAOrder | RAOrder;
+
+// Ensure renderField accepts keys from both EAOrder and RAOrder
+export type SaleKeys = keyof (EAOrder & RAOrder);

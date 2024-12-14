@@ -28,6 +28,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Clean up the data before sending
+    const cleanData = Object.fromEntries(
+      Object.entries(body).map(([key, value]) => [
+        key,
+        typeof value === 'string' ? value.trim() : value
+      ])
+    );
+
     // Forward to Google Script
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
@@ -36,13 +44,15 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         action: 'updateOrder',
-        orderId: body.orderId,
-        data: body
+        orderId: cleanData.orderId,
+        data: cleanData
       })
     });
 
-    // Handle Google Script HTML error response
+    // Parse response
+    let result;
     const contentType = response.headers.get('content-type');
+    
     if (contentType?.includes('text/html')) {
       const text = await response.text();
       console.error('Received HTML response:', text);
@@ -50,33 +60,26 @@ export async function POST(request: Request) {
         { error: 'Server is busy, please try again' },
         { status: 503 }
       );
+    } else {
+      result = await response.json();
     }
 
-    // Handle non-OK response
-    if (!response.ok) {
-      throw new Error(`Google Script responded with status ${response.status}`);
+    // Handle error response
+    if (!response.ok || result.error) {
+      const errorMessage = result.error || 'Failed to update order';
+      console.error('Error from Google Script:', errorMessage);
+      return NextResponse.json(
+        { error: errorMessage },
+        { status: response.ok ? 400 : 500 }
+      );
     }
 
-    const result = await response.json();
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error in order update:', error);
     return NextResponse.json(
-      { error: 'Failed to update order' },
+      { error: 'Failed to update order', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
-}
-
-// Handle OPTIONS for CORS
-export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Max-Age': '86400',
-    },
-  });
 }

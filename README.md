@@ -33,6 +33,40 @@ Un sistema CRM moderno y basado en la web diseñado para gestionar operaciones d
 - **Despliegue**: Cloudflare Pages
 
 ## 🚀 Guía de Inicio
+api/sales/stream 
+structure
+{
+  "orderId": "EA4942",                     // Unique identifier for the order
+  "status": "Pendiente",                   // Current status of the order
+  "delivery": "",                          // Delivery information (if applicable)
+  "customerName": "Nancy Alfaro Perez",    // Name of the customer
+  "username": "",                          // Username (if applicable)
+  "phone": "89986635",                     // Customer's phone number
+  "email": "nancyap1713@hotmail.com",      // Customer's email address
+  "business": "WAS",                       // Business name
+  "product": "Taza 3D",                    // Product name
+  "quantity": 1,                           // Quantity ordered
+  "size": "11oz",                          // Size of the product
+  "color": "Magica",                       // Color of the product
+  "packaging": "Normal",                   // Type of packaging
+  "customization": "no",                   // Customization details
+  "comments": "Sables la direccion exacta esta en el chat", // Additional comments
+  "productCost": 11900,                    // Cost of the product
+  "iva": 0,                                // Tax amount (if applicable)
+  "total": 14897,                          // Total cost of the order
+  "timestamp": "Fri Dec 13 2024 17:03:54 GMT-0600 (hora estándar central)", // Order timestamp
+  "funnel": "Whatsapp",                    // Source of the order
+  "orderType": "EA",                       // Type of order (e.g., EA, RA)
+  "expectedDate": "Mon Dec 16 2024 00:00:00 GMT-0600 (hora estándar central)", // Expected delivery date
+  "saleDate": "Fri Dec 13 2024 00:00:00 GMT-0600 (hora estándar central)", // Date of sale
+  "courier": "Privada",                    // Courier service
+  "seller": "Rafa",                        // Seller's name
+  "province": "San José central",          // Province of the delivery address
+  "canton": "moravia",                     // Canton of the delivery address
+  "district": "platanares",                // District of the delivery address
+  "address": "2X4V+4R8 Moravia, San José", // Delivery address
+  "shippingCost": 2997                     // Shipping cost
+}
 
 ### Requisitos Previos
 - Node.js >=18.18.0

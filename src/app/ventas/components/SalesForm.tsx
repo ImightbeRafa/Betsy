@@ -66,6 +66,14 @@ const SalesForm = () => {
     setProductInfo(calculateTotal(newInfo));
   };
 
+  const handleApplyIVAChange = (value: boolean) => {
+    setApplyIVA(value);
+    setProductInfo(prevInfo => {
+      const updatedInfo = { ...prevInfo, iva: value ? prevInfo.productCost * 0.13 : 0 };
+      return calculateTotal(updatedInfo);
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -199,7 +207,7 @@ const SalesForm = () => {
               orderType={customerInfo.orderType}
               onProductInfoChange={handleProductInfoChange}
               applyIVA={applyIVA}
-              onApplyIVAChange={setApplyIVA}
+              onApplyIVAChange={handleApplyIVAChange}
             />
 
             <button 

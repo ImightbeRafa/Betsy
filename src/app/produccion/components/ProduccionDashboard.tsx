@@ -137,7 +137,7 @@ export function ProductionDashboard() {
     }
   };
 
-  const handleOrderUpdate = async (orderId: string, updatedData: Partial<Sale>) => {
+  const handleOrderUpdate = async (orderId: string, updatedData: Partial<Sale>): Promise<Sale> => {
     try {
       const response = await fetch('/api/orders/update', {
         method: 'POST',
@@ -154,11 +154,13 @@ export function ProductionDashboard() {
         throw new Error('Failed to update order');
       }
 
+      const updatedOrder: Sale = await response.json();
       refresh();
       toast({
         title: "Orden actualizada",
         description: "La información de la orden ha sido actualizada exitosamente.",
       });
+      return updatedOrder;
     } catch (error) {
       console.error('Error updating order:', error);
       toast({
@@ -166,6 +168,7 @@ export function ProductionDashboard() {
         title: "Error",
         description: "No se pudo actualizar la información de la orden.",
       });
+      throw error;
     }
   };
 

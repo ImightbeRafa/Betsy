@@ -70,11 +70,14 @@ export default function HomeContent() {
           </a>
 
           {/* Statistics Card */}
-          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 opacity-75">
+          <a
+            href="/estadisticas" // Link to the Estadísticas page
+            className="group bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-200 opacity-100" // Same styles as other cards
+          >
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
                 <svg
-                  className="w-8 h-8 text-gray-400"
+                  className="w-8 h-8 text-blue-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -88,16 +91,16 @@ export default function HomeContent() {
                 </svg>
               </div>
               <h2 className="text-xl font-semibold text-gray-600 mb-2">Estadísticas</h2>
-              <p className="text-gray-500 text-center text-sm">Próximamente</p>
-              <span className="mt-2 px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">En desarrollo</span>
+              <p className="text-gray-500 text-center text-sm">Data en tiempo real</p>
+              
             </div>
-          </div>
+          </a>
         </div>
 
         {/* Footer Section */}
         <footer className="mt-16 text-center text-gray-500 text-sm">
           <p>© 2024 Betsy CRM. Hecho por Rafa:) </p>
-          <p>v0.1.4 </p>
+          <p>v1.0.0 </p>
         </footer>
       </main>
     </div>

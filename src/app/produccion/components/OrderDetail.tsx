@@ -48,6 +48,9 @@ export function OrderDetails({ order, onClose, onUpdateStatus }: OrderDetailsPro
               <option value="En Proceso">En Proceso</option>
               <option value="Completado">Completado</option>
               <option value="Entregado">Entregado</option>
+              <option value="Drive">Drive</option>
+              <option value="Impreso">Impreso</option>
+              <option value="PendienteDiseño">PendienteDiseño</option>
             </select>
           </div>
           <div>
@@ -65,6 +68,10 @@ export function OrderDetails({ order, onClose, onUpdateStatus }: OrderDetailsPro
           <div>
             <h4 className="font-semibold">Total</h4>
             <p className="font-bold">₡{order.total.toLocaleString()}</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Commentario</h4>
+            <p className="">{order.comments.toLocaleString()}</p>
           </div>
         </div>
       </DialogContent>

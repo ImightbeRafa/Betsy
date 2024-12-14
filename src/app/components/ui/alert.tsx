@@ -1,13 +1,15 @@
 import * as React from "react"
 
-interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: string;
+}
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, ...props }, ref) => (
+  ({ className, variant, ...props }, ref) => (
     <div
       ref={ref}
       role="alert"
-      className={`relative w-full rounded-lg border p-4 ${className}`}
+      className={`relative w-full rounded-lg border p-4 ${className} ${variant}`}
       {...props}
     />
   )

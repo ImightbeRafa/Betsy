@@ -16,7 +16,10 @@ export const StatusUpdateButton = ({
       'En Proceso',
       'Listo',
       'Entregado',
-      'Cancelado'
+      'Cancelado',
+      'Drive',
+      'Impreso',
+      'PendienteDiseño',
     ];
     
     return (

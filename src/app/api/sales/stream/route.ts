@@ -1,4 +1,3 @@
-// app/api/sales/stream/route.ts
 import { NextResponse } from 'next/server'
 import { SaleData } from './types'
 
@@ -9,21 +8,41 @@ function parsePipeDelimitedData(text: string): SaleData[] {
     return text.split(';')
       .filter(Boolean)
       .map(sale => {
+        const fields = sale.split('|').map(s => s.trim());
+        
         const [
-          orderId,
-          customerName,
-          total,
-          timestamp,
-          orderType,
-          phone,
-          email,
-          address,
-          product,
-          status,
-          business,
-          funnel,
-          ...rest
-        ] = sale.split('|').map(s => s.trim());
+          orderId,          // 0
+          customerName,     // 1
+          total,           // 2
+          timestamp,       // 3
+          orderType,       // 4
+          phone,           // 5
+          email,           // 6
+          address,         // 7
+          product,         // 8
+          status,          // 9
+          business,        // 10
+          funnel,          // 11
+          quantity,        // 12
+          size,           // 13
+          color,          // 14
+          packaging,       // 15
+          customization,   // 16
+          comments,        // 17
+          productCost,     // 18
+          iva,            // 19
+          expectedDate,    // 20
+          saleDate,       // 21
+          courier,        // 22
+          sellerEA,       // 23
+          province,       // 24
+          canton,         // 25
+          district,       // 26
+          shippingCost,   // 27
+          sellerRA,       // 28
+          agreedDate,     // 29
+          pickupDate      // 30
+        ] = fields;
 
         const baseSale = {
           orderId: orderId || '',
@@ -33,42 +52,42 @@ function parsePipeDelimitedData(text: string): SaleData[] {
           username: '',
           phone: phone || '',
           email: email || '',
-          business: business || '',
+          business: business || 'No especificado',
           product: product || '',
-          quantity: 0,
-          size: '',
-          color: '',
-          packaging: '',
-          customization: '',
-          comments: '',
-          productCost: 0,
-          iva: 0,
+          quantity: Number(quantity) || 0,
+          size: size || '',
+          color: color || '',
+          packaging: packaging || '',
+          customization: customization || '',
+          comments: comments || '',
+          productCost: Number(productCost) || 0,
+          iva: Number(iva) || 0,
           total: Number(total) || 0,
           timestamp: timestamp || new Date().toISOString(),
-          funnel: funnel || '',
+          funnel: funnel || 'No especificado'
         };
 
         if (orderType === 'EA') {
           return {
             ...baseSale,
             orderType: 'EA' as const,
-            expectedDate: '',
-            saleDate: '',
-            courier: '',
-            seller: '',
-            province: '',
-            canton: '',
-            district: '',
+            expectedDate: expectedDate || '',
+            saleDate: saleDate || '',
+            courier: courier || '',
+            seller: sellerEA || '',
+            province: province || '',
+            canton: canton || '',
+            district: district || '',
             address: address || '',
-            shippingCost: 0,
+            shippingCost: Number(shippingCost) || 0
           };
         } else {
           return {
             ...baseSale,
             orderType: 'RA' as const,
-            seller: '',
-            agreedDate: '',
-            pickupDate: '',
+            seller: sellerRA || '',
+            agreedDate: agreedDate || '',
+            pickupDate: pickupDate || ''
           };
         }
       });

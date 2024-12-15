@@ -37,10 +37,19 @@ export function OrderDetails({
   }, [order]);
 
   const handleInputChange = (field: SaleKeys, value: any) => {
-    setEditedOrder(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setEditedOrder(prev => {
+      const newOrder = { ...prev, [field]: value };
+      
+      if (field === 'productCost' || field === 'shippingCost') {
+        const productCost = field === 'productCost' ? value : prev.productCost || 0;
+        const shippingCost = prev.orderType === 'EA' 
+          ? (field === 'shippingCost' ? value : prev.shippingCost || 0)
+          : 0;
+        newOrder.total = productCost + shippingCost;
+      }
+      
+      return newOrder;
+    });
   };
 
   const handleSave = async () => {
@@ -176,10 +185,39 @@ export function OrderDetails({
     ['Color', 'color'],
     ['Empaque', 'packaging'],
     ['Personalización', 'customization'],
-    ['Total', 'total', 'number'],
     ['Delivery', 'delivery'],
     ['Timestamp', 'timestamp']
   ];
+
+  const renderTotal = () => {
+    const total = isEditing ? editedOrder.total : displayOrder.total;
+    return (
+      <div className="group relative py-2 transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-md px-2 -mx-2">
+        <div className="flex justify-between items-baseline">
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Total</label>
+        </div>
+        <p className="text-sm text-gray-900 dark:text-gray-100 font-medium mt-1">
+          {typeof total === 'number' ? total.toLocaleString() : '-'}
+        </p>
+      </div>
+    );
+  };
+
+  const renderShippingDetails = () => (
+    renderSection('Detalles de Envío', [
+      ['Dirección', 'address'],
+      ['Fecha Esperada', 'expectedDate'],
+      ['Fecha de Venta', 'saleDate'],
+      ['Mensajería', 'courier'],
+      ['Vendedor', 'seller'],
+      ['Provincia', 'province'],
+      ['Cantón', 'canton'],
+      ['Distrito', 'district'],
+      ['Costo de Producto', 'productCost', 'number'],
+      ['Costo de Envío', 'shippingCost', 'number'],
+      ['IVA', 'iva', 'number']
+    ])
+  );
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -257,19 +295,16 @@ export function OrderDetails({
                 ['Canal', 'funnel']
               ])}
 
-              {displayOrder.orderType === 'EA' && renderSection('Detalles de Envío', [
-                ['Dirección', 'address'],
-                ['Fecha Esperada', 'expectedDate'],
-                ['Fecha de Venta', 'saleDate'],
-                ['Mensajería', 'courier'],
-                ['Vendedor', 'seller'],
-                ['Provincia', 'province'],
-                ['Cantón', 'canton'],
-                ['Distrito', 'district'],
-                ['Costo de Producto', 'productCost', 'number'],
-                ['Costo de Envío', 'shippingCost', 'number'],
-                ['IVA', 'iva', 'number']
-              ])}
+              {displayOrder.orderType === 'EA' && (
+                <>
+                  {renderShippingDetails()}
+                  <div className="rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+                    <div className="p-4">
+                      {renderTotal()}
+                    </div>
+                  </div>
+                </>
+              )}
 
               {displayOrder.orderType === 'RA' && renderSection('Detalles de Retiro', [
                 ['Dirección', 'address'],

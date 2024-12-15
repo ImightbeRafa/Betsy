@@ -49,10 +49,10 @@ const SalesForm = () => {
 
   const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_SCRIPT_URL;
 
-  const calculateTotal = (info: ProductInfo): ProductInfo => {
+  const calculateTotal = (info: ProductInfo, shouldApplyIVA: boolean): ProductInfo => {
     const subtotal = info.productCost * info.cantidad;
     const shipping = customerInfo.orderType === 'EA' ? info.shippingCost : 0;
-    const ivaAmount = applyIVA ? subtotal * 0.13 : 0;
+    const ivaAmount = shouldApplyIVA ? subtotal * 0.13 : 0;
     const total = subtotal + shipping + ivaAmount;
 
     return {
@@ -63,15 +63,12 @@ const SalesForm = () => {
   };
 
   const handleProductInfoChange = (newInfo: ProductInfo) => {
-    setProductInfo(calculateTotal(newInfo));
+    setProductInfo(calculateTotal(newInfo, applyIVA));
   };
 
   const handleApplyIVAChange = (value: boolean) => {
     setApplyIVA(value);
-    setProductInfo(prevInfo => {
-      const updatedInfo = { ...prevInfo, iva: value ? prevInfo.productCost * 0.13 : 0 };
-      return calculateTotal(updatedInfo);
-    });
+    setProductInfo(prevInfo => calculateTotal(prevInfo, value));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -3,5 +3,5 @@ export default async function VentasLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <>{children}</>
 }

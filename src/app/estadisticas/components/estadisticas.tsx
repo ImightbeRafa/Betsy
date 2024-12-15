@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Estadisticas() {
-  const [filters, setFilters] = useState({ startDate: "", endDate: "", seller: "", orderType: "" });
+  const [filters, setFilters] = useState({ 
+    startDate: "", 
+    endDate: "", 
+    seller: "", 
+    orderType: "",
+    business: ""
+  });
   const [data, setData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [totals, setTotals] = useState({ totalSales: 0, totalOrders: 0 });
@@ -39,6 +45,7 @@ export default function Estadisticas() {
 
   const applyFilters = () => {
     let filtered = Array.isArray(data) ? [...data] : [];
+    
     if (filters.startDate) {
       filtered = filtered.filter(record => new Date(record.saleDate) >= new Date(filters.startDate));
     }
@@ -50,6 +57,11 @@ export default function Estadisticas() {
     }
     if (filters.orderType) {
       filtered = filtered.filter(record => record.orderType === filters.orderType);
+    }
+    if (filters.business) {
+      filtered = filtered.filter(record => 
+        record.business?.toLowerCase().includes(filters.business.toLowerCase())
+      );
     }
 
     setFilteredData(filtered);
@@ -68,7 +80,7 @@ export default function Estadisticas() {
       <h1 className="text-3xl font-bold mb-6 text-gray-700">Estadísticas de Ventas</h1>
 
       {/* Filter Inputs */}
-      <div className="bg-white shadow rounded-md p-4 mb-6 flex space-x-4 items-center">
+      <div className="bg-white shadow rounded-md p-4 mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <input
           type="date"
           name="startDate"
@@ -101,6 +113,14 @@ export default function Estadisticas() {
           className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Tipo de Orden"
         />
+        <input
+          type="text"
+          name="business"
+          value={filters.business}
+          onChange={handleFilterChange}
+          className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Nombre del Negocio"
+        />
       </div>
 
       {/* Totals Section */}
@@ -114,13 +134,14 @@ export default function Estadisticas() {
       {loading ? (
         <div className="text-gray-600 text-center mb-4">Cargando datos...</div>
       ) : (
-        <div className="bg-white shadow rounded-md p-4 mb-6">
+        <div className="bg-white shadow rounded-md p-4 mb-6 overflow-x-auto">
           <h2 className="text-lg font-semibold text-gray-700 mb-4">Detalles</h2>
-          <table className="table-auto w-full border border-gray-200">
+          <table className="min-w-full border border-gray-200">
             <thead className="bg-gray-100">
               <tr>
                 <th className="border px-4 py-2 text-gray-600">ID</th>
                 <th className="border px-4 py-2 text-gray-600">Cliente</th>
+                <th className="border px-4 py-2 text-gray-600">Negocio</th>
                 <th className="border px-4 py-2 text-gray-600">Vendedor</th>
                 <th className="border px-4 py-2 text-gray-600">Fecha de Venta</th>
                 <th className="border px-4 py-2 text-gray-600">Total</th>
@@ -132,6 +153,7 @@ export default function Estadisticas() {
                   <tr key={record.orderId}>
                     <td className="border px-4 py-2">{record.orderId}</td>
                     <td className="border px-4 py-2">{record.customerName}</td>
+                    <td className="border px-4 py-2">{record.business}</td>
                     <td className="border px-4 py-2">{record.seller}</td>
                     <td className="border px-4 py-2">{record.saleDate}</td>
                     <td className="border px-4 py-2">{record.total.toLocaleString()} CRC</td>
@@ -139,7 +161,7 @@ export default function Estadisticas() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="text-center py-4 text-gray-600">No data available</td>
+                  <td colSpan={6} className="text-center py-4 text-gray-600">No hay datos disponibles</td>
                 </tr>
               )}
             </tbody>

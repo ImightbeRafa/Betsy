@@ -5,7 +5,6 @@ import { NextResponse } from "next/server"
 // This function will be executed for all routes except those excluded by the matcher
 export default withAuth(
   function middleware(req) {
-    // If the user is not authenticated, they will be redirected to the signin page
     return NextResponse.next()
   },
   {
@@ -20,20 +19,13 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - auth (authentication pages)
-     * - api/auth (authentication API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - home (public home page)
-     * - google.svg (auth button image)
-     */
+    // Protected routes that require authentication
     '/ventas/:path*',
     '/produccion/:path*',
     '/estadisticas/:path*',
-    '/api/:path*',
-    '/((?!api/auth|auth|_next/static|_next/image|favicon.ico|home|google.svg).*)',
-  ],
+    '/home/:path*',
+    '/home',
+    // Exclude authentication-related paths
+    '/((?!auth|api/auth|_next/static|_next/image|favicon.ico|google.svg).*)',
+  ]
 }

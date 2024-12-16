@@ -20,23 +20,12 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }) {
       return user.email === ALLOWED_EMAIL
     },
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) {
-        return `${baseUrl}${url}`
-      }
-      else if (new URL(url).origin === baseUrl) {
-        return url
-      }
-      return baseUrl
-    },
     async session({ session, token }) {
-      if (session.user?.email !== ALLOWED_EMAIL) {
-        throw new Error("Unauthorized")
+      if (!session?.user?.email) return { expires: "" }
+      if (session.user.email !== ALLOWED_EMAIL) {
+        return { expires: "" }
       }
-      return {
-        ...session,
-        accessToken: token.accessToken,
-      }
+      return session
     },
     async jwt({ token, user, account }) {
       if (account && user) {
@@ -47,6 +36,10 @@ export const authOptions: NextAuthOptions = {
       }
       return token
     },
+  },
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours
   },
   secret: process.env.NEXTAUTH_SECRET,
 }

@@ -1,8 +1,14 @@
 # Sistema CRM Betsy
 
-Un sistema CRM moderno y basado en la web diseñado para gestionar operaciones de ventas y producción, con un enfoque en la entrada de datos fácil de usar y el seguimiento de ventas en tiempo real.
+Un sistema CRM moderno y basado en la web diseñado para gestionar operaciones de ventas y producción, con autenticación segura y enfoque en la entrada de datos fácil de usar.
 
 ## 🚀 Características
+
+### Autenticación y Seguridad
+- 🔐 Autenticación con Google OAuth 2.0
+- 👤 Control de acceso basado en correo electrónico
+- 🛡️ Protección de rutas mediante middleware
+- ⚡ Sesiones JWT
 
 ### Gestión de Ventas
 - 📝 Captura y almacenamiento de información del cliente
@@ -27,51 +33,29 @@ Un sistema CRM moderno y basado en la web diseñado para gestionar operaciones d
 ## 🛠️ Stack Técnico
 
 - **Frontend**: Next.js 14 con TypeScript
+- **Autenticación**: NextAuth.js con Google Provider
 - **Estilo**: Tailwind CSS con componentes de shadcn/ui
 - **Backend**: Google Apps Script
 - **Base de Datos**: Google Sheets
 - **Despliegue**: Cloudflare Pages
 
 ## 🚀 Guía de Inicio
-api/sales/stream 
-structure
-{
-  "orderId": "EA4942",                     // Unique identifier for the order
-  "status": "Pendiente",                   // Current status of the order
-  "delivery": "",                          // Delivery information (if applicable)
-  "customerName": "Nancy Alfaro Perez",    // Name of the customer
-  "username": "",                          // Username (if applicable)
-  "phone": "89986635",                     // Customer's phone number
-  "email": "nancyap1713@hotmail.com",      // Customer's email address
-  "business": "WAS",                       // Business name
-  "product": "Taza 3D",                    // Product name
-  "quantity": 1,                           // Quantity ordered
-  "size": "11oz",                          // Size of the product
-  "color": "Magica",                       // Color of the product
-  "packaging": "Normal",                   // Type of packaging
-  "customization": "no",                   // Customization details
-  "comments": "Sables la direccion exacta esta en el chat", // Additional comments
-  "productCost": 11900,                    // Cost of the product
-  "iva": 0,                                // Tax amount (if applicable)
-  "total": 14897,                          // Total cost of the order
-  "timestamp": "Fri Dec 13 2024 17:03:54 GMT-0600 (hora estándar central)", // Order timestamp
-  "funnel": "Whatsapp",                    // Source of the order
-  "orderType": "EA",                       // Type of order (e.g., EA, RA)
-  "expectedDate": "Mon Dec 16 2024 00:00:00 GMT-0600 (hora estándar central)", // Expected delivery date
-  "saleDate": "Fri Dec 13 2024 00:00:00 GMT-0600 (hora estándar central)", // Date of sale
-  "courier": "Privada",                    // Courier service
-  "seller": "Rafa",                        // Seller's name
-  "province": "San José central",          // Province of the delivery address
-  "canton": "moravia",                     // Canton of the delivery address
-  "district": "platanares",                // District of the delivery address
-  "address": "2X4V+4R8 Moravia, San José", // Delivery address
-  "shippingCost": 2997                     // Shipping cost
-}
 
 ### Requisitos Previos
 - Node.js >=18.18.0
 - npm
 - Cuenta de Google para acceso a Sheets
+- Credenciales de OAuth 2.0 configuradas
+
+### Variables de Entorno Requeridas
+
+```env
+NEXTAUTH_URL=https://your-domain.com
+NEXTAUTH_SECRET=your-secret-key
+GOOGLE_ID=your-oauth-client-id
+GOOGLE_SECRET=your-oauth-client-secret
+NEXT_PUBLIC_SCRIPT_URL=your-google-apps-script-url
+```
 
 ### Instalación
 
@@ -92,7 +76,6 @@ structure
 
    ```bash
    cp .env.example .env.local
-   # Actualiza con la URL de despliegue de tu Google Apps Script
    ```
 
 4. Inicia el servidor de desarrollo:
@@ -171,36 +154,31 @@ npm start
 - IVA
 - Total
 
+
 ## ✨ Estado Actual
 
 ### Características Completadas
+- ✅ Sistema de autenticación con Google
+- ✅ Protección de rutas mediante middleware
 - ✅ Funcionalidad básica del formulario de ventas
 - ✅ Integración con Google Sheets
 - ✅ Visualización de ventas recientes
 - ✅ Estructura de navegación
 - ✅ Creación y almacenamiento de pedidos
+- ✅ Control de acceso basado en correo electrónico
 
 ### En Desarrollo
 - 🚧 Módulo de producción
 - 🚧 Reportes mejorados
-- 🚧 Autenticación de usuarios
 - 🚧 Funcionalidad de búsqueda avanzada
-
-## 🤝 Contribuciones
-
-1. Haz un fork del repositorio
-2. Crea tu rama de características (`git checkout -b feature/amazing-feature`)
-3. Realiza tus cambios (`git commit -m 'Add some amazing feature'`)
-4. Sube a la rama (`git push origin feature/amazing-feature`)
-5. Abre una Pull Request
-
-## 📄 Licencia
-[Tipo de Licencia] - Consulta LICENSE.md para más detalles
+- 🚧 Panel de administración
+- 🚧 Sistema de notificaciones
 
 ## 📞 Contacto
-Mantenedor del Proyecto - [Tu Información de Contacto]
+Email: contact@laplacelab.xyz
 
 ## 🙏 Agradecimientos
+- [NextAuth.js](https://next-auth.js.org/) por la autenticación
 - [shadcn/ui](https://ui.shadcn.com/) por la biblioteca de componentes
 - Google Sheets por la funcionalidad de base de datos
 - Cloudflare por el alojamiento

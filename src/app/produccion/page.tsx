@@ -1,8 +1,17 @@
+import { getServerSession } from "next-auth/next"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import BackupPage from '../produccion/components/BackupPage';
 import { ProductionDashboard } from './components/ProduccionDashboard';
 import HomeButton from '@/app/components/ui/HomeButtom';
 
-export default function ProductionPage() {
+export default async function ProductionPage() {
+  const session = await getServerSession(authOptions)
+  
+  if (!session) {
+    redirect('/auth/signin')
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm border-b sticky top-0 z-10">

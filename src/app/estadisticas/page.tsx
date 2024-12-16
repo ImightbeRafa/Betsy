@@ -1,7 +1,16 @@
+import { getServerSession } from "next-auth/next"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import EstadisticasLogic from "./components/estadisticas";
 import HomeButton from "@/app/components/ui/HomeButtom";
 
-export default function EstadisticasPage() {
+export default async function EstadisticasPage() {
+  const session = await getServerSession(authOptions)
+  
+  if (!session) {
+    redirect('/auth/signin')
+  }
+
   return (
     <div className="container mx-auto p-4">
       <nav className="bg-white shadow-sm border-b">

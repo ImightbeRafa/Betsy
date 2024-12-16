@@ -36,14 +36,16 @@ export function OrderDetails({
     setEditedOrder(order);
   }, [order]);
 
-  const handleInputChange = (field: SaleKeys, value: any) => {
+  const handleInputChange = (field: SaleKeys, value: string | number) => {
     setEditedOrder(prev => {
-      const newOrder = { ...prev, [field]: value };
+      const newOrder = { ...prev };
+      
+      (newOrder[field as keyof Sale] as Sale[keyof Sale]) = value;
       
       if (field === 'productCost' || field === 'shippingCost') {
-        const productCost = field === 'productCost' ? value : prev.productCost || 0;
-        const shippingCost = prev.orderType === 'EA' 
-          ? (field === 'shippingCost' ? value : prev.shippingCost || 0)
+        const productCost = Number(newOrder.productCost) || 0;
+        const shippingCost = newOrder.orderType === 'EA' 
+          ? (Number(newOrder.shippingCost) || 0)
           : 0;
         newOrder.total = productCost + shippingCost;
       }
@@ -168,7 +170,11 @@ export function OrderDetails({
         <h3 className="font-medium text-sm text-gray-600 dark:text-gray-300">{title}</h3>
       </div>
       <div className="p-4 space-y-4">
-        {fields.map(([label, field, type]) => renderField(label, field, type))}
+        {fields.map(([label, field, type]) => (
+          <div key={`${title}-${String(field)}`}>
+            {renderField(label, field, type)}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -298,7 +304,7 @@ export function OrderDetails({
               {displayOrder.orderType === 'EA' && (
                 <>
                   {renderShippingDetails()}
-                  <div className="rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
+                  <div key="total-section" className="rounded-lg border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
                     <div className="p-4">
                       {renderTotal()}
                     </div>

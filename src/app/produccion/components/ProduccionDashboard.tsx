@@ -16,6 +16,8 @@ import { OrderDetails } from './OrderDetail';
 import { Sale } from '../types/sales';
 import { Loader2 } from 'lucide-react';
 import { useToast } from "@/app/hooks/use-toast";
+import { GuiaGenerator } from './GuiaGenerator';
+import { Button } from "@/app/components/ui/button";
 
 // Filter function
 const filterOrders = (orders: Sale[], statusFilter: string, searchTerm: string) => {
@@ -38,19 +40,24 @@ const DashboardHeader = React.memo(({
   searchTerm, 
   onSearchChange, 
   statusFilter, 
-  onStatusChange 
+  onStatusChange,
+  onGenerateGuias
 }: {
   loading: boolean;
   searchTerm: string;
   onSearchChange: (value: string) => void;
   statusFilter: string;
   onStatusChange: (value: string) => void;
+  onGenerateGuias: () => void;
 }) => (
   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-    <CardTitle className="flex items-center gap-2">
-      Panel de Producción
-      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-    </CardTitle>
+    <div className="flex items-center gap-4">
+      <CardTitle className="flex items-center gap-2">
+        Panel de Producción
+        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+      </CardTitle>
+      <Button onClick={onGenerateGuias}>Generar Guías</Button>
+    </div>
     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
       <Input
         placeholder="Buscar por cliente, orden o producto..."
@@ -79,7 +86,13 @@ const DashboardHeader = React.memo(({
 
 DashboardHeader.displayName = 'DashboardHeader';
 
-export function ProductionDashboard() {
+export interface ProductionDashboardProps {
+  onGenerateGuias: () => void;
+  isGuiaGeneratorOpen: boolean;
+  onGuiaGeneratorClose: () => void;
+}
+
+export function ProductionDashboard({ onGenerateGuias, isGuiaGeneratorOpen, onGuiaGeneratorClose }: ProductionDashboardProps) {
   const [selectedOrder, setSelectedOrder] = useState<Sale | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -197,6 +210,10 @@ export function ProductionDashboard() {
             onSearchChange={setSearchTerm}
             statusFilter={statusFilter}
             onStatusChange={setStatusFilter}
+            onGenerateGuias={() => {
+              console.log('Generate Guias clicked');
+              onGenerateGuias();
+            }}
           />
         </CardHeader>
         <CardContent>
@@ -238,6 +255,13 @@ export function ProductionDashboard() {
           onUpdateOrder={handleOrderUpdate}
         />
       )}
+
+      <GuiaGenerator
+        orders={groupedOrders.EA}
+        isOpen={isGuiaGeneratorOpen}
+        onClose={onGuiaGeneratorClose}
+        onUpdateOrder={handleOrderUpdate}
+      />
     </div>
   );
 }

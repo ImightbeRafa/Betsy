@@ -136,7 +136,7 @@ export default function HomeContent() {
         <footer className="mt-16 text-center text-gray-500 text-sm">
           <p>© 2024 Betsy CRM. Hecho por Rafa:) </p>
           <p>otro dia, otro dolar </p>
-          <p>v1.1.0 </p>
+          <p>v1.1.1 </p>
         </footer>
       </main>
     </div>

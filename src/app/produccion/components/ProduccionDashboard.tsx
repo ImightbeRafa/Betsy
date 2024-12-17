@@ -19,7 +19,7 @@ import { useToast } from "@/app/hooks/use-toast";
 import { GuiaGenerator } from './GuiaGenerator';
 import { Button } from "@/app/components/ui/button";
 
-// Filter function
+// Updated Filter function
 const filterOrders = (orders: Sale[], statusFilter: string, searchTerm: string) => {
   const searchLower = searchTerm.toLowerCase();
   return orders.filter(order => {
@@ -29,7 +29,8 @@ const filterOrders = (orders: Sale[], statusFilter: string, searchTerm: string) 
     return (
       order.customerName.toLowerCase().includes(searchLower) ||
       order.orderId.toLowerCase().includes(searchLower) ||
-      order.product.toLowerCase().includes(searchLower)
+      order.product.toLowerCase().includes(searchLower) ||
+      order.phone.toLowerCase().includes(searchLower)
     );
   });
 };
@@ -60,7 +61,7 @@ const DashboardHeader = React.memo(({
     </div>
     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
       <Input
-        placeholder="Buscar por cliente, orden o producto..."
+        placeholder="Buscar por cliente, teléfono, orden o producto..."
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
         className="w-full sm:w-64"

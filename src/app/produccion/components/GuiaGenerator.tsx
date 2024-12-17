@@ -89,12 +89,28 @@ export function GuiaGenerator({ orders, isOpen, onClose, onUpdateOrder }: GuiaGe
             <span class="info-value">${order.product}</span>
           </div>
           <div class="info-row">
+            <span class="info-label">Cantidad:</span>
+            <span class="info-value">${order.quantity}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Provincia:</span>
+            <span class="info-value">${order.orderType === 'EA' ? order.province : 'N/A'}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Cantón:</span>
+            <span class="info-value">${order.orderType === 'EA' ? order.canton : 'N/A'}</span>
+          </div>
+          <div class="info-row">
             <span class="info-label">Dirección:</span>
             <span class="info-value">${order.address}</span>
           </div>
           <div class="info-row">
             <span class="info-label">Negocio:</span>
             <span class="info-value">${order.business}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Comentarios:</span>
+            <span class="info-value">${order.comments}</span>
           </div>
         </div>
       `;
@@ -183,6 +199,10 @@ export function GuiaGenerator({ orders, isOpen, onClose, onUpdateOrder }: GuiaGe
                     <div>
                       <p className="font-medium">Orden: {og.orderId}</p>
                       <p className="text-sm text-gray-500">{order.customerName}</p>
+                      <p className="text-sm text-gray-500">
+                        {order.orderType === 'EA' ? `${order.province}, ${order.canton}` : 'N/A'}
+                      </p>
+                      <p className="text-sm text-gray-500">Cantidad: {order.quantity}</p>
                     </div>
                     <Input
                       placeholder="Número de guía"

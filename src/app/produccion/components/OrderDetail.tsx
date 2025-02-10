@@ -139,7 +139,7 @@ export function OrderDetails({
               onUpdateStatus(e.target.value);
             }}
           >
-            {['Pendiente', 'En Proceso', 'Completado', 'Entregado', 'Drive', 'Impreso', 'PendienteDiseño']
+            {['Pendiente', 'En Proceso', 'Completado', 'Entregado', 'Drive', 'Impreso', 'PendienteDiseño', 'Enviado']
               .map(status => (
                 <option key={status} value={status}>{status}</option>
               ))

@@ -68,7 +68,7 @@ const DashboardHeader = React.memo(({
       />
       <Select value={statusFilter} onValueChange={onStatusChange}>
         <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="Estado" />
+          <SelectValue placeholder="Estado1" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos los estados</SelectItem>

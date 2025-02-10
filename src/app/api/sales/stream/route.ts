@@ -31,17 +31,18 @@ function parsePipeDelimitedData(text: string): SaleData[] {
           comments,        // 17
           productCost,     // 18
           iva,            // 19
-          expectedDate,    // 20
-          saleDate,       // 21
-          courier,        // 22
-          sellerEA,       // 23
-          province,       // 24
-          canton,         // 25
-          district,       // 26
-          shippingCost,   // 27
-          sellerRA,       // 28
-          agreedDate,     // 29
-          pickupDate      // 30
+          username,        // 20
+          expectedDate,    // 21
+          saleDate,       // 22
+          courier,        // 23
+          sellerEA,       // 24
+          province,       // 25
+          canton,         // 26
+          district,       // 27
+          shippingCost,   // 28
+          sellerRA,       // 29
+          agreedDate,     // 30
+          pickupDate      // 31
         ] = fields;
 
         const baseSale = {
@@ -49,7 +50,7 @@ function parsePipeDelimitedData(text: string): SaleData[] {
           status: status || 'Pendiente',
           delivery: '',
           customerName: customerName || '',
-          username: '',
+          username: username || '',
           phone: phone || '',
           email: email || '',
           business: business || 'No especificado',

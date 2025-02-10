@@ -76,6 +76,7 @@ const DashboardHeader = React.memo(({
           <SelectItem value="en proceso">En Proceso</SelectItem>
           <SelectItem value="completado">Completado</SelectItem>
           <SelectItem value="entregado">Entregado</SelectItem>
+          <SelectItem value="Enviado">Enviado</SelectItem>
           <SelectItem value="Drive">Drive</SelectItem>
           <SelectItem value="Impreso">Impreso</SelectItem>
           <SelectItem value="PendienteDiseño">PendienteDiseño</SelectItem>

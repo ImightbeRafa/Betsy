@@ -79,6 +79,7 @@ export function OrderDetails({
       'Pendiente': 'bg-yellow-100 text-yellow-800',
       'En Proceso': 'bg-blue-100 text-blue-800',
       'Completado': 'bg-green-100 text-green-800',
+      'Enviado': 'bg-purple-100 text-purple-800',
       'Entregado': 'bg-purple-100 text-purple-800',
       'Drive': 'bg-indigo-100 text-indigo-800',
       'Impreso': 'bg-cyan-100 text-cyan-800',

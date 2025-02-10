@@ -13,6 +13,8 @@ export function StatusBadge({ status }: { status: string }) {
           return 'bg-green-100 text-green-800';
         case 'entregado':
           return 'bg-purple-100 text-purple-800';
+        case 'entregado':
+          return 'bg-purple-100 text-purple-800';
         case 'PendienteDiseño':
           return 'bg-purple-100 text-purple-800';
         default:
